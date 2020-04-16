@@ -112,8 +112,8 @@ def isPrime(number):
 
     #Take odd D such that 1 < D <= K
     #If D devides number then number is not prime. otherwise prime.
-    for D in range(2, K):
-        if D % 2 == 0:
+    for D in range(1, K, 2):
+        if D % 2 == 0 or D == 1:
             pass
         else:
             if number % D == 0 or number % 5 == 0:
