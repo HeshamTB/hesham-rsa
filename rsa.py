@@ -9,10 +9,10 @@ import sys
 
 def main():
     
-    if sys.argv[1] == "gen" and len(sys.argv) == 3:
-        n ,e ,d = generateKeys()
+    if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
+        n ,e ,d = generateKeys(int(sys.argv[2]))
         key = (n, e, d)
-        keyFileName = sys.argv[2]
+        keyFileName = sys.argv[3]
         try:
             saveKeyFile(key, keyFileName)
         except IOError:
@@ -30,11 +30,10 @@ def main():
             msg_encrypted = encrypt(msg, key_public)
             print("Encrypted msg: ", msg_encrypted)
         if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
-            fileName = sys.argv[2]
+            cipher = int(sys.argv[2])
             key = readKeyFile(sys.argv[3])
-            cipher = int()
-            with open(fileName, "r") as cipherFile:
-                cipher = int(cipherFile.readline()) ##one line may make problems later with padding
+            #with open(fileName, "r") as cipherFile:
+            #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
             msg = decrypt(cipher, key[2],key[0])
             print("Decrypted message: ", msg)
 
@@ -84,13 +83,17 @@ def decrypt(cipher, privateKey, n):
     d = privateKey
     msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n) # m = c^d mod n
     msg_decrypted = int(msg_decrypted_number_form)
-    msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), "little").decode()).strip()
+    try:
+        msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), "little").decode()).strip()
+    except UnicodeDecodeError:
+        print("Cant decrypt properly")
     return msg_decrypted
 
 def getPrime(bits):
     while True:
         #Byte order "little" or "big" does not matter here since we want a random number from os.urandom()
         x = int.from_bytes(os.urandom(int(bits/8)),"little")
+        print("trying: ", x)
         if isPrime(x):
             return x
 
@@ -119,7 +122,7 @@ def isPrime(number):
 
 def readKeyFile(keyName):
     key = tuple()
-    with open(keyName, "r") as keyFile:
+    with open(keyName, "rb") as keyFile:
         tempkey = keyFile.readlines()
         key = (int(tempkey[0].strip()), int(tempkey[1].strip()), int(tempkey[2].strip()))
     return key
