@@ -4,16 +4,19 @@
 # Hesham Banafa 
 
 import math
+import os
 
 def main():
 
-    #test isPrime method
-    for i in range(2,999999):
-        if isPrime(i):
-            print(i, 'is prime')
+    #Prime of size 32 bit random
+    print(getPrime(32))
 
 def getPrime(bits):
-    pass
+    while True:
+        x = int.from_bytes(os.urandom(int(bits/8)),"little")
+        if isPrime(x):
+            return x
+
 
 def isPrime(number):
     if number == 2:
