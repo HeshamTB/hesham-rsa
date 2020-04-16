@@ -5,18 +5,36 @@
 
 import math
 import os
-import decimal
+import sys
 
 def main():
+    
+    if sys.argv[1] == "gen" and len(sys.argv) == 3:
+        n ,e ,d = generateKeys()
+        key = (n, e, d)
+        keyFileName = sys.argv[2]
+        try:
+            saveKeyFile(key, keyFileName)
+        except IOError:
+            print("could not write file")
+            exit(1)
+        except Exception as ex:
+            print(ex)
+            exit(1)
+    if sys.argv[1] == "encrypt" and len(sys.argv) == 4:
+        msg = sys.argv[2]
+        keyName = sys.argv[3]
+        key = readKeyFile(keyName)
+        key_public = (key[0], key[1])
+        msg_encrypted = encrypt(msg, key_public)
 
+def generateKeys(bits=64):
     #Primes of size 32 bit random
     #resulting in a 64-bit key mod
-    p = getPrime(32)
-    print("p: ", p)
-    q = getPrime(32)
-    print("q: ", q)
+    p = getPrime(int(bits/2))
+    q = getPrime(int(bits/2))
     n = p*q
-    print("n: ", n)
+    #print("n: ", n)
     print("%d bit key" % n.bit_length())
 
     #lamda(n) = LCM(p-1, q-1)
@@ -26,23 +44,21 @@ def main():
     #lcm = abs((p-1) * (q-1)) / gcd
     #print("LCM: ", lcm)
     phi = (p-1)*(q-1)
-    print("phi: ", phi)
+    #print("phi: ", phi)
     #e exponant should be 1 < e < lamda(n) and GCD(e, lamda(n)) = 1 (coprime)
     # recommended value is 65,537
     e = 65537
     d = pow(e,-1,phi)
-    print("d: ", d)
-    print("--------------")
-    print("public key (%d, %d)" % (n,e) )
+    #print("d: ", d)
+    print("---------------------------------")
+    print("public key (%d, %d)" % (n,e))
+    return n, e, d
 
-    msg_text = "Hello"
-    msg_number_form = int.from_bytes(msg_text.encode(),"little")
-    print("Message: %s or %d" % (msg_text, msg_number_form))
+def encrypt(message, publicKey):
+    return None
 
-    msg_encrypted_number_form = pow(msg_number_form, e, n)
-    print("Encrypted msg: ", msg_encrypted_number_form)
-    msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n)
-    print("Decrypted msg: ", msg_decrypted_number_form)
+def decrypt(cipher, privateKey, n):
+    pass
 
 def getPrime(bits):
     while True:
@@ -74,6 +90,17 @@ def isPrime(number):
                 return False
     return True
 
+def readKeyFile(keyName):
+    key = tuple()
+    with open(keyName, "r") as keyFile:
+        tempkey = keyFile.readlines()
+        key = (int(tempkey[0].strip()), int(tempkey[1].strip()), int(tempkey[2].strip()))
+    return key
+    
+
+def saveKeyFile(key, fileName):
+    with open(fileName, "w") as keyFile:
+        keyFile.write("{0}\n{1}\n{2}\n".format(key[0], key[1], key[2]))
 
 if __name__ == "__main__":
     main()
