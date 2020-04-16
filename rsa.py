@@ -21,12 +21,25 @@ def main():
         except Exception as ex:
             print(ex)
             exit(1)
-    if sys.argv[1] == "encrypt" and len(sys.argv) == 4:
-        msg = sys.argv[2]
-        keyName = sys.argv[3]
-        key = readKeyFile(keyName)
-        key_public = (key[0], key[1])
-        msg_encrypted = encrypt(msg, key_public)
+    if len(sys.argv) == 4:
+        if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key>
+            msg = sys.argv[2]
+            keyName = sys.argv[3]
+            key = readKeyFile(keyName)
+            key_public = (key[0], key[1])
+            msg_encrypted = encrypt(msg, key_public)
+            print("Encrypted msg: ", msg_encrypted)
+        if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
+            fileName = sys.argv[2]
+            key = readKeyFile(sys.argv[3])
+            cipher = int()
+            with open(fileName, "r") as cipherFile:
+                cipher = int(cipherFile.readline()) ##one line may make problems later with padding
+            msg = decrypt(cipher, key[2],key[0])
+            print("Decrypted message: ", msg)
+
+
+
 
 def generateKeys(bits=64):
     #Primes of size 32 bit random
@@ -55,10 +68,24 @@ def generateKeys(bits=64):
     return n, e, d
 
 def encrypt(message, publicKey):
-    return None
+    msg_text = message
+    n = publicKey[0]
+    e = publicKey[1]
+    print("using n: {0}, e: {1}".format(n, e))
+
+    msg_number_form = int.from_bytes(msg_text.encode(),"little")
+    print("Message: %s or %d" % (msg_text, msg_number_form))
+
+    msg_encrypted_number_form = pow(msg_number_form, e, n) # c = msg^e mod n
+    return msg_encrypted_number_form
 
 def decrypt(cipher, privateKey, n):
-    pass
+    msg_encrypted_number_form = cipher
+    d = privateKey
+    msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n) # m = c^d mod n
+    msg_decrypted = int(msg_decrypted_number_form)
+    msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), "little").decode()).strip()
+    return msg_decrypted
 
 def getPrime(bits):
     while True:
