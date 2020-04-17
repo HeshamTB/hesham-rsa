@@ -1,0 +1,16 @@
+Add signing capability. (sign a word (last word?) using private key)
+	so reciever can decrypt using my public key to verify the sender.
+
+Add scrambling of padding to encrypted messages.
+https://www.inf.pucrs.br/~calazans/graduate/TPVLSI_I/RSA-oaep_spec.pdf
+
+Add cmd to list keys in keys dir and check if it has private key also.
+
+Add use SHA-1 to provide public key finger print (hashing function).
+
+Support reading file for encryption, decryption and maybe signing.
+
+resources:
+	https://crypto.stackexchange.com/questions/1448/definition-of-textbook-rsa
+	https://crypto.stackexchange.com/questions/3608/why-is-padding-used-for-rsa-encryption-given-that-it-is-not-a-block-cipher
+	https://www.inf.pucrs.br/~calazans/graduate/TPVLSI_I/RSA-oaep_spec.pdf
