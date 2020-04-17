@@ -3,6 +3,8 @@
 #program to generate rsa key pair using methods in EE-305
 # Hesham Banafa 
 
+#Large Prime check: https://www.alpertron.com.ar/ECM.HTM
+
 import math
 import os
 import sys
@@ -44,10 +46,14 @@ def main():
 
 
 def generateKeys(bits=64):
+    from multiprocessing.pool import Pool
     #Primes of size 32 bit random
     #resulting in a 64-bit key mod
-    p = getPrime(int(bits/2))
-    q = getPrime(int(bits/2))
+    pool = Pool()
+    result1 = pool.apply_async(getPrime, [int(bits/2)])
+    result2 = pool.apply_async(getPrime, [int(bits/2)])
+    p = result1.get()
+    q = result2.get()
     n = p*q
     #print("n: ", n)
     print("%d bit key" % n.bit_length())
