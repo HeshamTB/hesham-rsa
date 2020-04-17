@@ -1,6 +1,6 @@
 
 
-s = 'test message hello awdawdaefe'
+s = 'test message hello awdawd'
 print(s)
 s_number = int.from_bytes(s.encode('utf-8'),'little')
 print(s_number)
@@ -16,7 +16,7 @@ print(msg_list)
 
 import rsa as en
 
-key = en.generateKeys()
+key = en.generateKeys("temp")
 enc_list = list()
 pub_key = (key[0],key[1])
 for word in msg_list:
@@ -37,3 +37,4 @@ sig_enc = en.encrypt(sig,(n,e))
 print(sig_enc)
 sig_un = en.decrypt(sig_enc,d,n)
 print(sig_un)
+print(key)
