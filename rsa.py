@@ -134,6 +134,8 @@ def readKeyFile(keyName):
     
 
 def saveKeyFile(key, fileName):
+    if not os.path.isdir(keysFolder):
+        os.makedirs(keysFolder)
     with open(keysFolder+fileName, "w") as keyFile:
         keyFile.write("{0}\n{1}\n{2}\n".format(hex(key[0]), hex(key[1]), hex(key[2])))
 
