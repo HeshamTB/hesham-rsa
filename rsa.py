@@ -13,10 +13,11 @@ keysFolder = "keys/"
 byteOrder = "little"
 
 def main():
-    
-    if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
+
+    if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
         n ,e ,d = generateKeys(int(sys.argv[2]))
         key = (n, e, d)
+        printKey(key)
         keyFileName = sys.argv[3]
         try:
             saveKeyFile(key, keyFileName)
@@ -56,7 +57,6 @@ def generateKeys(bits=64):
     q = result2.get()
     n = p*q
     #print("n: ", n)
-    print("%d bit key" % n.bit_length())
 
     #lamda(n) = LCM(p-1, q-1)
     #Since LCM(a,b) = ab/GCD(a,b)
@@ -70,9 +70,6 @@ def generateKeys(bits=64):
     # recommended value is 65,537
     e = 65537
     d = pow(e,-1,phi)
-    #print("d: ", d)
-    print("---------------------------------")
-    print("public key (%s/%s)" % (hex(n),hex(e)))
     return n, e, d
 
 def encrypt(message, publicKey):
@@ -142,6 +139,19 @@ def readKeyFile(keyName):
 def saveKeyFile(key, fileName):
     with open(keysFolder+fileName, "w") as keyFile:
         keyFile.write("{0}\n{1}\n{2}\n".format(hex(key[0]), hex(key[1]), hex(key[2])))
+
+def printKey(key):
+    n = key[0]
+    e = key[1]
+    d = key[2]
+    print("----------------------------------------------"+
+        "\n{}-BIT KEY".format(n.bit_length())+
+        "\nPUBLIC PART:"+
+        "\n{0}/{1}".format(hex(n), hex(e))+
+        "\nPTIVATE PART:"+
+        "\n{0}".format(hex(d))+
+        "\n----------------------------------------------",
+    )
 
 if __name__ == "__main__":
     main()
