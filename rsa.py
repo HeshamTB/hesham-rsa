@@ -3,7 +3,12 @@
 #program to generate rsa key pair using methods in EE-305
 # Hesham Banafa 
 
-#Large Prime check: https://www.alpertron.com.ar/ECM.HTM
+"""
+Large Prime check: https://www.alpertron.com.ar/ECM.HTM
+To crack a key, find p or q through n. (prime factorazation)
+Another way to find p or q from the private key:
+https://crypto.stackexchange.com/questions/13113/how-can-i-find-the-prime-numbers-used-in-rsa
+"""
 
 import math
 import os
@@ -11,12 +16,17 @@ import sys
 
 keysFolder = "keys/"
 byteOrder = "little"
+N=0
+E=1
+D=2
+P=3
+Q=4
+PHI=5
 
 def main():
 
     if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
-        n ,e ,d = generateKeys(int(sys.argv[2]))
-        key = (n, e, d)
+        key = generateKeys(int(sys.argv[2]))
         printKey(key)
         keyFileName = sys.argv[3]
         try:
@@ -33,7 +43,7 @@ def main():
             msg_list = msg.split()
             keyName = sys.argv[3]
             key = readKeyFile(keyName)
-            key_public = (key[0], key[1])
+            key_public = (key[N], key[E])
             msg_encrypted = ""
             for word in msg_list:
                 msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
@@ -45,7 +55,7 @@ def main():
             msg_decrypted = ""
             key = readKeyFile(sys.argv[3])
             for cipher_word in cipher_list:
-                msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[2],key[0]))
+                msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[D],key[N]))
             #with open(fileName, "r") as cipherFile:
             #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
             print("Decrypted message: \n", msg_decrypted)
@@ -77,12 +87,12 @@ def generateKeys(bits=64):
     # recommended value is 65,537
     e = 65537
     d = pow(e,-1,phi)
-    return n, e, d
+    return (n, e, d, p, q, phi)
 
 def encrypt(message, publicKey):
     msg_text = message
-    n = publicKey[0]
-    e = publicKey[1]
+    n = publicKey[N]
+    e = publicKey[E]
     print("using n: {0}, e: {1}".format(n, e))
 
     msg_number_form = int.from_bytes(msg_text.encode(), byteOrder)
@@ -139,7 +149,15 @@ def readKeyFile(keyName):
     key = tuple()
     with open(keysFolder+keyName, "r") as keyFile:
         tempkey = keyFile.readlines()
-        key = (int(tempkey[0].strip(), 16), int(tempkey[1].strip(), 16), int(tempkey[2].strip(), 16))
+        if len(tempkey) == 2: #means it only public part (n, e)
+            key = (int(tempkey[N].strip(), 16), int(tempkey[E].strip(), 16))
+        else:                 #Make this a loop from 0 to 5
+            key = (int(tempkey[N].strip(), 16),
+            int(tempkey[E].strip(), 16),
+            int(tempkey[D].strip(), 16),
+            int(tempkey[P].strip(), 16),
+            int(tempkey[Q].strip(), 16),
+            int(tempkey[PHI].strip(), 16))
     return key
     
 
@@ -147,12 +165,13 @@ def saveKeyFile(key, fileName):
     if not os.path.isdir(keysFolder):
         os.makedirs(keysFolder)
     with open(keysFolder+fileName, "w") as keyFile:
-        keyFile.write("{0}\n{1}\n{2}\n".format(hex(key[0]), hex(key[1]), hex(key[2])))
+        for entry in key:
+            keyFile.write(hex(entry)+"\n")
 
 def printKey(key):
-    n = key[0]
-    e = key[1]
-    d = key[2]
+    n = key[N]
+    e = key[E]
+    d = key[D]
     print("----------------------------------------------"+
         "\n{}-BIT KEY".format(n.bit_length())+
         "\nPUBLIC PART:"+
