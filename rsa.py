@@ -22,13 +22,14 @@ D=2
 P=3
 Q=4
 PHI=5
+ID=6
 
 def main():
 
     if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
-        key = generateKeys(int(sys.argv[2]))
-        printKey(key)
         keyFileName = sys.argv[3]
+        key = generateKeys(keyFileName, int(sys.argv[2]))
+        printKey(key)
         try:
             saveKeyFile(key, keyFileName)
         except IOError:
@@ -49,6 +50,7 @@ def main():
                 msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
             #msg_encrypted = encrypt(msg, key_public)
             print("Encrypted msg: \n", msg_encrypted)
+            print("Signed: \n", sign(msg_encrypted, key))
         if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
             cipher = sys.argv[2]
             cipher_list = cipher.split()
@@ -63,7 +65,7 @@ def main():
 
 
 
-def generateKeys(bits=64):
+def generateKeys(id, bits=64):
     from multiprocessing.pool import Pool
     #Primes of size 32 bit random
     #resulting in a 64-bit key mod
@@ -87,7 +89,7 @@ def generateKeys(bits=64):
     # recommended value is 65,537
     e = 65537
     d = pow(e,-1,phi)
-    return (n, e, d, p, q, phi)
+    return (n, e, d, p, q, phi, id)
 
 def encrypt(message, publicKey):
     msg_text = message
@@ -145,19 +147,30 @@ def isPrime(number):
                 return False
     return True
 
+def sign(encrypted_msg, key):
+    enc_msg = str(encrypted_msg)
+    encrypted_msg_list = enc_msg.split()
+    enc_sig = encrypt("sig:"+key[ID], (key[N], key[D]))
+    encrypted_msg_list.append(enc_sig)
+    signed_msg = ""
+    for word in encrypted_msg_list:
+        signed_msg = str(signed_msg) + " " + str(word)
+    return signed_msg
+
 def readKeyFile(keyName):
     key = tuple()
     with open(keysFolder+keyName, "r") as keyFile:
         tempkey = keyFile.readlines()
         if len(tempkey) == 2: #means it only public part (n, e)
-            key = (int(tempkey[N].strip(), 16), int(tempkey[E].strip(), 16))
+            key = (int(tempkey[N].strip(), 16), int(tempkey[E].strip(), 16), 0, 0, 0, 0, tempkey[ID])
         else:                 #Make this a loop from 0 to 5
             key = (int(tempkey[N].strip(), 16),
             int(tempkey[E].strip(), 16),
             int(tempkey[D].strip(), 16),
             int(tempkey[P].strip(), 16),
             int(tempkey[Q].strip(), 16),
-            int(tempkey[PHI].strip(), 16))
+            int(tempkey[PHI].strip(), 16),
+            str(tempkey[ID].strip()))
     return key
     
 
@@ -165,8 +178,9 @@ def saveKeyFile(key, fileName):
     if not os.path.isdir(keysFolder):
         os.makedirs(keysFolder)
     with open(keysFolder+fileName, "w") as keyFile:
-        for entry in key:
-            keyFile.write(hex(entry)+"\n")
+        for entry in range(0, 5):
+            keyFile.write(hex(key[entry])+"\n")
+        keyFile.write(key[ID]+"\n")
 
 def printKey(key):
     n = key[N]
