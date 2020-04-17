@@ -93,9 +93,11 @@ def getPrime(bits):
     while True:
         #Byte order "little" or "big" does not matter here since we want a random number from os.urandom()
         x = int.from_bytes(os.urandom(int(bits/8)),"little")
-        print("trying: ", x)
+        print("trying: ", x, end="")
         if isPrime(x):
+            print("\nprime: ", x)
             return x
+        print("\r",end="")
 
 
 def isPrime(number):
