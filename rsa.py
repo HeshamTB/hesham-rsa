@@ -63,7 +63,7 @@ def generateKeys(bits=64):
     d = pow(e,-1,phi)
     #print("d: ", d)
     print("---------------------------------")
-    print("public key (%d, %d)" % (n,e))
+    print("public key (%s/%s)" % (hex(n),hex(e)))
     return n, e, d
 
 def encrypt(message, publicKey):
@@ -81,7 +81,7 @@ def encrypt(message, publicKey):
 def decrypt(cipher, privateKey, n):
     msg_encrypted_number_form = cipher
     d = privateKey
-    msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n) # m = c^d mod n
+    msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n) # msg = c^d mod n
     msg_decrypted = int(msg_decrypted_number_form)
     try:
         msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), "little").decode()).strip()
@@ -122,15 +122,15 @@ def isPrime(number):
 
 def readKeyFile(keyName):
     key = tuple()
-    with open(keyName, "rb") as keyFile:
+    with open(keyName, "r") as keyFile:
         tempkey = keyFile.readlines()
-        key = (int(tempkey[0].strip()), int(tempkey[1].strip()), int(tempkey[2].strip()))
+        key = (int(tempkey[0].strip(), 16), int(tempkey[1].strip(), 16), int(tempkey[2].strip(), 16))
     return key
     
 
 def saveKeyFile(key, fileName):
     with open(fileName, "w") as keyFile:
-        keyFile.write("{0}\n{1}\n{2}\n".format(key[0], key[1], key[2]))
+        keyFile.write("{0}\n{1}\n{2}\n".format(hex(key[0]), hex(key[1]), hex(key[2])))
 
 if __name__ == "__main__":
     main()
