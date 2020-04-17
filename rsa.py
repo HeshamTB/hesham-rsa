@@ -7,6 +7,9 @@ import math
 import os
 import sys
 
+keysFolder = "keys/"
+byteOrder = "little"
+
 def main():
     
     if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
@@ -72,7 +75,7 @@ def encrypt(message, publicKey):
     e = publicKey[1]
     print("using n: {0}, e: {1}".format(n, e))
 
-    msg_number_form = int.from_bytes(msg_text.encode(),"little")
+    msg_number_form = int.from_bytes(msg_text.encode(), byteOrder)
     print("Message: %s or %d" % (msg_text, msg_number_form))
 
     msg_encrypted_number_form = pow(msg_number_form, e, n) # c = msg^e mod n
@@ -84,7 +87,7 @@ def decrypt(cipher, privateKey, n):
     msg_decrypted_number_form = pow(msg_encrypted_number_form, d, n) # msg = c^d mod n
     msg_decrypted = int(msg_decrypted_number_form)
     try:
-        msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), "little").decode()).strip()
+        msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), byteOrder).decode()).strip()
     except UnicodeDecodeError:
         print("Cant decrypt properly")
     return msg_decrypted
@@ -92,7 +95,7 @@ def decrypt(cipher, privateKey, n):
 def getPrime(bits):
     while True:
         #Byte order "little" or "big" does not matter here since we want a random number from os.urandom()
-        x = int.from_bytes(os.urandom(int(bits/8)),"little")
+        x = int.from_bytes(os.urandom(int(bits/8)), byteOrder)
         print("trying: ", x, end="")
         if isPrime(x):
             print("\nprime: ", x)
@@ -124,14 +127,14 @@ def isPrime(number):
 
 def readKeyFile(keyName):
     key = tuple()
-    with open(keyName, "r") as keyFile:
+    with open(keysFolder+keyName, "r") as keyFile:
         tempkey = keyFile.readlines()
         key = (int(tempkey[0].strip(), 16), int(tempkey[1].strip(), 16), int(tempkey[2].strip(), 16))
     return key
     
 
 def saveKeyFile(key, fileName):
-    with open(fileName, "w") as keyFile:
+    with open(keysFolder+fileName, "w") as keyFile:
         keyFile.write("{0}\n{1}\n{2}\n".format(hex(key[0]), hex(key[1]), hex(key[2])))
 
 if __name__ == "__main__":
