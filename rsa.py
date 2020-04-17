@@ -54,12 +54,15 @@ def main():
         if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
             cipher = sys.argv[2]
             cipher_list = cipher.split()
+            sig = verify(cipher_list)
+            del cipher_list[-1]
             msg_decrypted = ""
             key = readKeyFile(sys.argv[3])
             for cipher_word in cipher_list:
                 msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[D],key[N]))
             #with open(fileName, "r") as cipherFile:
             #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
+            print("Signed by: ", sig)
             print("Decrypted message: \n", msg_decrypted)
 
 
@@ -155,7 +158,20 @@ def sign(encrypted_msg, key):
     signed_msg = ""
     for word in encrypted_msg_list:
         signed_msg = str(signed_msg) + " " + str(word)
-    return signed_msg
+    return signed_msg.strip()
+
+def verify(cipher_list):
+    sig = "Unknown"
+    local_keys = os.listdir(keysFolder)
+    cipher_list.reverse() #To get last word using index 0
+    encrypted_sig = cipher_list[0]
+    cipher_list.reverse()
+    for key_name in local_keys:
+        key = readKeyFile(key_name)
+        print("Found key: ", key_name)
+        sig = str(decrypt(int(encrypted_sig), key[E], key[N]))
+        if "sig:" in sig:
+            return sig.replace("sig:","")
 
 def readKeyFile(keyName):
     key = tuple()
@@ -187,6 +203,7 @@ def printKey(key):
     e = key[E]
     d = key[D]
     print("----------------------------------------------"+
+        "\nID: {}".format(key[ID]) +
         "\n{}-BIT KEY".format(n.bit_length())+
         "\nPUBLIC PART:"+
         "\n{0}/{1}".format(hex(n), hex(e))+
