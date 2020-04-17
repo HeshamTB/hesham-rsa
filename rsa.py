@@ -30,18 +30,25 @@ def main():
     if len(sys.argv) == 4:
         if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key>
             msg = sys.argv[2]
+            msg_list = msg.split()
             keyName = sys.argv[3]
             key = readKeyFile(keyName)
             key_public = (key[0], key[1])
-            msg_encrypted = encrypt(msg, key_public)
-            print("Encrypted msg: ", msg_encrypted)
+            msg_encrypted = ""
+            for word in msg_list:
+                msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
+            #msg_encrypted = encrypt(msg, key_public)
+            print("Encrypted msg: \n", msg_encrypted)
         if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
-            cipher = int(sys.argv[2])
+            cipher = sys.argv[2]
+            cipher_list = cipher.split()
+            msg_decrypted = ""
             key = readKeyFile(sys.argv[3])
+            for cipher_word in cipher_list:
+                msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[2],key[0]))
             #with open(fileName, "r") as cipherFile:
             #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
-            msg = decrypt(cipher, key[2],key[0])
-            print("Decrypted message: ", msg)
+            print("Decrypted message: \n", msg_decrypted)
 
 
 
@@ -79,7 +86,7 @@ def encrypt(message, publicKey):
     print("using n: {0}, e: {1}".format(n, e))
 
     msg_number_form = int.from_bytes(msg_text.encode(), byteOrder)
-    print("Message: %s or %d" % (msg_text, msg_number_form))
+    print("Word: %s or %d" % (msg_text, msg_number_form))
 
     msg_encrypted_number_form = pow(msg_number_form, e, n) # c = msg^e mod n
     return msg_encrypted_number_form
