@@ -13,6 +13,7 @@ https://crypto.stackexchange.com/questions/13113/how-can-i-find-the-prime-number
 import math
 import os
 import sys
+import MillerRabin as mr
 
 keysFolder = "keys/"
 byteOrder = "little"
@@ -135,7 +136,7 @@ def getPrime(bits):
         #Byte order "little" or "big" does not matter here since we want a random number from os.urandom()
         x = int.from_bytes(os.urandom(int(bits/8)), byteOrder)
         print("trying: ", x, end="")
-        if isPrime(x):
+        if mr.is_prime(x):
             print("\nprime: ", x)
             return x
         print("\r",end="")

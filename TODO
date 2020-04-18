@@ -10,3 +10,4 @@ resources:
 	https://crypto.stackexchange.com/questions/1448/definition-of-textbook-rsa
 	https://crypto.stackexchange.com/questions/3608/why-is-padding-used-for-rsa-encryption-given-that-it-is-not-a-block-cipher
 	https://www.inf.pucrs.br/~calazans/graduate/TPVLSI_I/RSA-oaep_spec.pdf
+	https://stackoverflow.com/questions/17298130/working-with-large-primes-in-python
