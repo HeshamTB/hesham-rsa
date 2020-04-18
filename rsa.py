@@ -38,8 +38,8 @@ def main():
         except Exception as ex:
             print(ex)
             exit(1)
-    if len(sys.argv) == 5 or len(sys.argv) == 4:
-        if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
+    if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
+        if len(sys.argv) == 5:
             msg = sys.argv[2]
             msg_list = msg.split()
             keyName = sys.argv[3]
@@ -52,8 +52,13 @@ def main():
                 msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
             #msg_encrypted = encrypt(msg, key_public)
             print("Encrypted msg: \n", msg_encrypted)
-            print("Signed: \n", sign(msg_encrypted, signing_key))
-        if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
+            print("Signed: \n", sign(msg_encrypted, signing_key)) ## Adds an encrypted sig at the end of message.
+        else:
+            print("Not enough arguments")
+            print("rsa encrypt <message> <key> <signer>")
+            #Make help function
+    if sys.argv[1] == "decrypt": ##rsa decrypt "<cipher>" <key>
+        if len(sys.argv) == 4:
             cipher = sys.argv[2]
             cipher_list = cipher.split()
             sig = verify(cipher_list)
@@ -62,10 +67,12 @@ def main():
             key = readKeyFile(sys.argv[3])
             for cipher_word in cipher_list:
                 msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[D],key[N]))
-            #with open(fileName, "r") as cipherFile:
-            #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
             print("Signed by: ", sig)
             print("Decrypted message: \n", msg_decrypted)
+        else:
+            print("Not enough arguments")
+            print("rsa decrypt \"<cipher>\" <key>")
+
     if sys.argv[1] == "list":
         listKeys()
 
