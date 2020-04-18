@@ -177,8 +177,8 @@ def readKeyFile(keyName):
     key = tuple()
     with open(keysFolder+keyName, "r") as keyFile:
         tempkey = keyFile.readlines()
-        if len(tempkey) == 2: #means it only public part (n, e)
-            key = (int(tempkey[N].strip(), 16), int(tempkey[E].strip(), 16), 0, 0, 0, 0, tempkey[ID])
+        if len(tempkey) == 3: #means it only public part (n, e, id)
+            key = (int(tempkey[N].strip(), 16), int(tempkey[E].strip(), 16), 0, 0, 0, 0, tempkey[2])
         else:                 #Make this a loop from 0 to 5
             key = (int(tempkey[N].strip(), 16),
             int(tempkey[E].strip(), 16),
@@ -194,7 +194,7 @@ def saveKeyFile(key, fileName):
     if not os.path.isdir(keysFolder):
         os.makedirs(keysFolder)
     with open(keysFolder+fileName, "w") as keyFile:
-        for entry in range(0, 5):
+        for entry in range(0, 6):
             keyFile.write(hex(key[entry])+"\n")
         keyFile.write(key[ID]+"\n")
 
