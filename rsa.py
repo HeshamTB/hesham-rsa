@@ -101,7 +101,7 @@ def generateKeys(id, bits=64):
     #e exponant should be 1 < e < lamda(n) and GCD(e, lamda(n)) = 1 (coprime)
     # recommended value is 65,537
     e = 65537
-    d = pow(e,-1,phi)
+    d = pow(e,-1,phi) # d = e^-1 mod phi
     return (n, e, d, p, q, phi, id)
 
 def encrypt(message, publicKey):
@@ -226,16 +226,16 @@ def listKeys():
     if not os.path.isdir(keysFolder):
         os.makedirs(keysFolder)
     local_keys = os.listdir(keysFolder)
-    print(local_keys)
     if len(local_keys) == 0:
+        print("Cant find local keys.")
         return
     print("ID      PRIVATE")
     print("________________")
     for keyName in local_keys:
         key = readKeyFile(keyName)
         if key[D] == 0:
-            check = u''
-        else: check = u'\u2713'
+            check = "".strip()
+        else: check = '\u2713'
         print("{}   {}\n".format(key[ID], check))
 
 
