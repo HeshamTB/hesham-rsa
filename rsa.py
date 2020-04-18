@@ -66,7 +66,8 @@ def main():
             #    cipher = int(cipherFile.readline()) ##one line may make problems later with padding
             print("Signed by: ", sig)
             print("Decrypted message: \n", msg_decrypted)
-
+    if sys.argv[1] == "list":
+        listKeys()
 
 
 
@@ -213,6 +214,23 @@ def printKey(key):
         "\n{0}".format(hex(d))+
         "\n----------------------------------------------",
     )
+
+def listKeys():
+    if not os.path.isdir(keysFolder):
+        os.makedirs(keysFolder)
+    local_keys = os.listdir(keysFolder)
+    print(local_keys)
+    if len(local_keys) == 0:
+        return
+    print("ID      PRIVATE")
+    print("________________")
+    for keyName in local_keys:
+        key = readKeyFile(keyName)
+        if key[D] == 0:
+            check = u''
+        else: check = u'\u2713'
+        print("{}   {}\n".format(key[ID], check))
+
 
 if __name__ == "__main__":
     main()
