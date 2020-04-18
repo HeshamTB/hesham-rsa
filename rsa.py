@@ -242,7 +242,7 @@ def listKeys():
         if key[D] == 0:
             check = "".strip()
         else: check = '\u2713'
-        print("{}   {}\n".format(key[ID], check))
+        print("{}   {}\n".format(key[ID], check).strip())
 
 def exportKey(keyFileName):
     key = readKeyFile(keyFileName)
