@@ -38,19 +38,21 @@ def main():
         except Exception as ex:
             print(ex)
             exit(1)
-    if len(sys.argv) == 4:
-        if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key>
+    if len(sys.argv) == 5 or len(sys.argv) == 4:
+        if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
             msg = sys.argv[2]
             msg_list = msg.split()
             keyName = sys.argv[3]
+            signing_key_name = sys.argv[4]
             key = readKeyFile(keyName)
+            signing_key = readKeyFile(signing_key_name)
             key_public = (key[N], key[E])
             msg_encrypted = ""
             for word in msg_list:
                 msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
             #msg_encrypted = encrypt(msg, key_public)
             print("Encrypted msg: \n", msg_encrypted)
-            print("Signed: \n", sign(msg_encrypted, key))
+            print("Signed: \n", sign(msg_encrypted, signing_key))
         if sys.argv[1] == "decrypt": ##rsa decrypt <cipher> <key>
             cipher = sys.argv[2]
             cipher_list = cipher.split()
