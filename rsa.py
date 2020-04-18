@@ -75,6 +75,9 @@ def main():
 
     if sys.argv[1] == "list":
         listKeys()
+    if sys.argv[1] == "export": #rsa export <key>
+        key_file_name = sys.argv[2]
+        exportKey(key_file_name)
 
 
 
@@ -205,7 +208,10 @@ def saveKeyFile(key, fileName):
         os.makedirs(keysFolder)
     with open(keysFolder+fileName, "w") as keyFile:
         for entry in range(0, 6):
-            keyFile.write(hex(key[entry])+"\n")
+            if key[entry] != 0:
+                keyFile.write(hex(key[entry])+"\n")
+            else:
+                pass
         keyFile.write(key[ID]+"\n")
 
 def printKey(key):
@@ -238,6 +244,10 @@ def listKeys():
         else: check = '\u2713'
         print("{}   {}\n".format(key[ID], check))
 
-
+def exportKey(keyFileName):
+    key = readKeyFile(keyFileName)
+    public_key = (key[N], key[E],0,0,0,0,key[ID])
+    saveKeyFile(public_key, key[ID]+"-public")
+    print("Saved public form of key {}".format(key[ID]))
 if __name__ == "__main__":
     main()
