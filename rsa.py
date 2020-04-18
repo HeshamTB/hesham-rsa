@@ -235,14 +235,14 @@ def listKeys():
     if len(local_keys) == 0:
         print("Cant find local keys.")
         return
-    print("ID      PRIVATE")
-    print("________________")
+    print("ID      PRIVATE      SIZE")
+    print("-------------------------")
     for keyName in local_keys:
         key = readKeyFile(keyName)
         if key[D] == 0:
             check = "".strip()
         else: check = '\u2713'
-        print("{}   {}\n".format(key[ID], check).strip())
+        print("%7s%7s%7s-bit" % (key[ID].strip(), check, key[N].bit_length()))
 
 def exportKey(keyFileName):
     key = readKeyFile(keyFileName)
