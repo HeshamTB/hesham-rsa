@@ -91,6 +91,8 @@ def main():
             printKey(cracked_key)
         if sys.argv[1] == "print": #rsa print <key>
             printKey(readKeyFile(sys.argv[2]))
+        if sys.argv[1] == "help":
+            printHelp()
 
     #No command exit code
     exit(127)
@@ -311,6 +313,15 @@ def crackKey2(keyName):
             print(key_cracked)
             return key_cracked
         else: continue
+
+def printHelp():
+    print("commands:")
+    print("rsa gen <keysize> <keyname>")
+    print("rsa encrypt <message> <key> <signer>")
+    print("rsa decrypt \"<cipher>\" <key>")
+    print("rsa export <key>")
+    print("rsa crack <key>")
+    print("rsa print <key>")
 
 if __name__ == "__main__":
     main()
