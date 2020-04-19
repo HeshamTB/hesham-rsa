@@ -85,6 +85,10 @@ def main():
             key_file_name = sys.argv[2]
             exportKey(key_file_name)
             exit(0)
+        if sys.argv[1] == "crack":
+            keyName = sys.argv[2]
+            cracked_key = crackKey(keyName)
+            printKey(cracked_key)
     #No command exit code
     exit(127)
 
@@ -259,5 +263,25 @@ def exportKey(keyFileName):
     public_key = (key[N], key[E], 0, 0, 0, 0, key[ID])
     saveKeyFile(public_key, key[ID]+"-public")
     print("Saved public form of key {} in keys folder".format(key[ID]))
+
+def crackKey(keyName):
+    print("in crack")
+    key = readKeyFile(keyName)
+    n = key[N]
+    for number in range(7, n - 1):
+        if mr.is_prime(number):
+            print("Trying prime: ", number, end="\r")
+            # if number devides n then it p or q
+            if n % number == 0:
+                p = number
+                q = int(n/p)
+                phi = (p-1)*(q-1)
+                e = 65537
+                d = pow(e,-1,phi)
+                key_cracked = (n, e, d, p, q, phi, str(keyName+"-cracked"))
+                return key_cracked
+            else: pass
+        else: pass
+
 if __name__ == "__main__":
     main()
