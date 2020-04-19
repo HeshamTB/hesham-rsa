@@ -85,9 +85,9 @@ def main():
             key_file_name = sys.argv[2]
             exportKey(key_file_name)
             exit(0)
-        if sys.argv[1] == "crack":
+        if sys.argv[1] == "crack": #rsa crack <key>
             keyName = sys.argv[2]
-            cracked_key = crackKey(keyName)
+            cracked_key = crackKey2(keyName)
             printKey(cracked_key)
     #No command exit code
     exit(127)
@@ -282,6 +282,32 @@ def crackKey(keyName):
                 return key_cracked
             else: pass
         else: pass
+
+def crackKey2(keyName):
+    print("in crack")
+    key = readKeyFile(keyName)
+    n = key[N]
+    print("n: ", n)
+    bits = int(n.bit_length())
+    print("bits: ", bits)
+    while True:
+        number = int.from_bytes(os.urandom(int(bits/8)), byteOrder)
+        if number == 0 or number == 1: continue
+        print("Trying prime: ", number, end="\r")
+        # if number devides n then it p or q
+        if n % number == 0:
+            print("\nFound a factor")
+            p = number
+            print("p: ", p)
+            q = int(n/p)
+            phi = (p-1)*(q-1)
+            if phi == 0: continue
+            e = 65537
+            d = pow(e,-1,phi)
+            key_cracked = (n, e, d, p, q, phi, str(keyName+"-cracked"))
+            print(key_cracked)
+            return key_cracked
+        else: continue
 
 if __name__ == "__main__":
     main()
