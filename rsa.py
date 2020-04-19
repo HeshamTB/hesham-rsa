@@ -89,6 +89,9 @@ def main():
             keyName = sys.argv[2]
             cracked_key = crackKey2(keyName)
             printKey(cracked_key)
+        if sys.argv[1] == "print": #rsa print <key>
+            printKey(readKeyFile(sys.argv[2]))
+
     #No command exit code
     exit(127)
 
