@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 
 s = 'test message hello awdawd'
 print(s)
