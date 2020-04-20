@@ -31,6 +31,9 @@ def main():
         if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
             keyFileName = sys.argv[3]
             key = generateKeys(keyFileName, int(sys.argv[2]))
+            print("e: ", key[E])
+            print("n: ", key[N])
+            print("d: ", key[D])
             printKey(key)
             try:
                 saveKeyFile(key, keyFileName)
