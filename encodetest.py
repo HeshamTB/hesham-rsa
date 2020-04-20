@@ -38,3 +38,14 @@ print(sig_enc)
 sig_un = en.decrypt(sig_enc,d,n)
 print(sig_un)
 print(key)
+
+import OAEP
+
+key = en.generateKeys("encode-test", 2048)
+x = int(en.encrypt("test message", (key[en.N], key[en.E])))
+print(x)
+encoded_msg = OAEP.i2osp(x, key[en.N].bit_length())
+print(encoded_msg)
+
+decoded = OAEP.os2ip(encoded_msg)
+print(decoded)
