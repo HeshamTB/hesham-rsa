@@ -52,7 +52,7 @@ def main():
                 key_public = (key[N], key[E])
                 msg_encrypted = ""
                 for word in msg_list:
-                    msg_encrypted = msg_encrypted + " " + str(encrypt(word, key_public))
+                    msg_encrypted = msg_encrypted + " " + hex(encrypt(word, key_public))
                 #msg_encrypted = encrypt(msg, key_public)
                 print("Encrypted msg: \n", msg_encrypted)
                 print("Signed: \n", sign(msg_encrypted, signing_key)) ## Adds an encrypted sig at the end of message.
@@ -70,7 +70,7 @@ def main():
                 msg_decrypted = ""
                 key = readKeyFile(sys.argv[3])
                 for cipher_word in cipher_list:
-                    msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word),key[D],key[N]))
+                    msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
                 print("Signed by: ", sig)
                 print("Decrypted message: \n", msg_decrypted)
             else:
@@ -95,6 +95,7 @@ def main():
             printHelp()
 
     #No command exit code
+    printHelp()
     exit(127)
 
 
@@ -185,7 +186,7 @@ def sign(encrypted_msg, key):
     enc_msg = str(encrypted_msg)
     encrypted_msg_list = enc_msg.split()
     enc_sig = encrypt("sig:"+key[ID], (key[N], key[D]))
-    encrypted_msg_list.append(enc_sig)
+    encrypted_msg_list.append(hex(enc_sig))
     signed_msg = ""
     for word in encrypted_msg_list:
         signed_msg = str(signed_msg) + " " + str(word)
@@ -200,7 +201,7 @@ def verify(cipher_list):
     for key_name in local_keys:
         key = readKeyFile(key_name)
         print("Found key: ", key_name)
-        sig = str(decrypt(int(encrypted_sig), key[E], key[N]))
+        sig = str(decrypt(int(encrypted_sig, 16), key[E], key[N]))
         if "sig:" in sig:
             return sig.replace("sig:","")
 
@@ -219,7 +220,7 @@ def readKeyFile(keyName):
             int(tempkey[PHI].strip(), 16),
             str(tempkey[ID].strip()))
     return key
-    
+
 
 def saveKeyFile(key, fileName):
     if not os.path.isdir(keysFolder):
@@ -293,7 +294,7 @@ def crackKey2(keyName):
     key = readKeyFile(keyName)
     n = key[N]
     print("n: ", n)
-    bits = int(n.bit_length())
+    bits = int(n.bit_length()/2)
     print("bits: ", bits)
     while True:
         number = int.from_bytes(os.urandom(int(bits/8)), byteOrder)
@@ -322,6 +323,7 @@ def printHelp():
     print("rsa export <key>")
     print("rsa crack <key>")
     print("rsa print <key>")
+    print("rsa list")
 
 if __name__ == "__main__":
     main()
