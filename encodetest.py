@@ -42,10 +42,22 @@ print(key)
 import OAEP
 
 key = en.generateKeys("encode-test", 2048)
-x = int(en.encrypt("test message", (key[en.N], key[en.E])))
+x = int(en.encrypt("test message int to octet string and int to octet string.", (key[en.N], key[en.E])))
 print(x)
 encoded_msg = OAEP.i2osp(x, key[en.N].bit_length())
 print(encoded_msg)
+char_encoded_message = str()
+for num in encoded_msg:
+    char_encoded_message += chr(num)
+print(char_encoded_message)
+decoded = list()
+for char in char_encoded_message:
+    decoded.append(int(ord(char)))
+#print(decoded)
+os2i = OAEP.os2ip(decoded)
+#print(os2i)
+print(en.decrypt(os2i, key[en.D], key[en.N]))
 
-decoded = OAEP.os2ip(encoded_msg)
-print(decoded)
+
+#decoded = OAEP.os2ip(encoded_msg)
+#print(decoded)
