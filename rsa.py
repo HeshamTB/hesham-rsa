@@ -74,7 +74,10 @@ def main():
                 key = readKeyFile(sys.argv[3])
                 for cipher_word in cipher_list:
                     msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
-                print("Signed by: ", sig)
+                if sig == None:
+                    print("Unknown signature!")
+                else:
+                    print("Signed by: ", sig)
                 print("Decrypted message: \n", msg_decrypted)
             else:
                 print("Not enough arguments")
@@ -201,12 +204,14 @@ def verify(cipher_list):
     cipher_list.reverse() #To get last word using index 0
     encrypted_sig = cipher_list[0]
     cipher_list.reverse()
+    sig = None
     for key_name in local_keys:
         key = readKeyFile(key_name)
         print("Found key: ", key_name)
         sig = str(decrypt(int(encrypted_sig, 16), key[E], key[N]))
         if "sig:" in sig:
             return sig.replace("sig:","")
+    else: return sig
 
 def readKeyFile(keyName):
     key = tuple()
