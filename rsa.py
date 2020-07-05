@@ -57,8 +57,10 @@ def main():
                 for word in msg_list:
                     msg_encrypted = msg_encrypted + " " + hex(encrypt(word, key_public))
                 #msg_encrypted = encrypt(msg, key_public)
+                sighned_msg = sign(msg_encrypted, signing_key)
                 print("Encrypted msg: \n", msg_encrypted)
-                print("Signed: \n", sign(msg_encrypted, signing_key)) ## Adds an encrypted sig at the end of message.
+                print("Signed: \n", sighned_msg) ## Adds an encrypted sig at the end of message.
+                saveToFile(sighned_msg, "encrypted-msg.txt")
             else:
                 print("Not enough arguments")
                 print("rsa encrypt <message> <key> <signer>")
@@ -277,6 +279,11 @@ def exportKey(keyFileName):
     public_key = (key[N], key[E], 0, 0, 0, 0, key[ID])
     saveKeyFile(public_key, key[ID]+"-public")
     print("Saved public form of key {} in keys folder".format(key[ID]))
+
+def saveToFile(msg, file):
+    msg = str(msg)
+    with open(file,"w") as msg_file:
+        msg_file.write(msg)
 
 def crackKey(keyName):
     print("in crack")
