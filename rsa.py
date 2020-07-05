@@ -24,6 +24,8 @@ P=3
 Q=4
 PHI=5
 ID=6
+FILE_HEADER = "---------- START OF RSA ENCRYPTED MESSAGE ----------"
+FILE_FOOTER = "---------- END OF RSA ENCRYPTED MESSAGE ----------"
 
 def main():
 
@@ -283,7 +285,10 @@ def exportKey(keyFileName):
 def saveToFile(msg, file):
     msg = str(msg)
     with open(file,"w") as msg_file:
-        msg_file.write(msg)
+        msg_file.writelines(FILE_HEADER + "\n")
+        msg_file.writelines(msg + "\n")
+        msg_file.writelines(FILE_FOOTER + "\n")
+
 
 def crackKey(keyName):
     print("in crack")
