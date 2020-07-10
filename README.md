@@ -11,7 +11,7 @@ There is no packaging or installation. Works in current dir (portable) for now.
     python hrsa
 
 ## generating keys
-to generate a key pair with and ID 
+To generate a key pair with an ID 
 
     ./hrsa [keysize] [keyID]
 All generated keys are {working dir}/saves/ in keys folder
