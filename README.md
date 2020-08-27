@@ -1,21 +1,23 @@
 
-# hesham-rsa (hrsa)
-A simple program written in python to implement RSA public encryption. Used as Course EE-305 project.
+# hesham-rsa
+A simple program written in python to implement RSA public encryption. Used as Course EE-305 project KAU.
 # Installation 
 There is no packaging or installation. Works in current dir (portable) for now.
+
+    git clone https://apollo-server.ddns.net/gitea/Hesham/hesham-rsa.git
+
 # Usage
 
-    ./hrsa
+    ./rsa.py
    or 
    
-    python hrsa
+    python rsa.py
 
 ## generating keys
-To generate a key pair with an ID 
+to generate a key pair with and ID 
 
-    ./hrsa [keysize] [keyID]
+    ./rsa.py [keysize] [keyID]
 All generated keys are {working dir}/saves/ in keys folder
 ## encrypting 
 
-    ./hrsa encrypt "[message]" [RecieverKeyID] [SenderSignetureKeyID]
-
+    ./rsa.py encrypt "[message]" [RecieverKeyID] [SenderSignetureKeyID]
