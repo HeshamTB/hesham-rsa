@@ -40,11 +40,11 @@ def main():
                 saveKeyFile(key, keyFileName)
             except IOError:
                 print("could not write file")
-                exit(1)
+                sys.exit(1)
             except Exception as ex:
                 print(ex)
-                exit(1)
-            exit(0)
+                sys.exit(1)
+            sys.exit(0)
         if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
             if len(sys.argv) == 5:
                 msg = sys.argv[2]
@@ -64,7 +64,7 @@ def main():
                 print("Not enough arguments")
                 print("rsa encrypt <message> <key> <signer>")
                 #Make help function
-            exit(0)
+            sys.exit(0)
         if sys.argv[1] == "decrypt": ##rsa decrypt "<cipher>" <key>
             if len(sys.argv) == 4:
                 cipher = sys.argv[2]
@@ -83,16 +83,16 @@ def main():
             else:
                 print("Not enough arguments")
                 print("rsa decrypt \"<cipher>\" <keyid>")
-            exit(0)
+            sys.exit(0)
 
         if sys.argv[1] == "list":
             listKeys()
-            exit(0)
+            sys.exit(0)
         if sys.argv[1] == "export": #rsa export <key>
             if len(sys.argv) == 3:
                 key_file_name = sys.argv[2]
                 exportKey(key_file_name)
-                exit(0)
+                sys.exit(0)
             else:
                 print("Not enough arguments")
                 print("rsa export <keyid>")
@@ -107,7 +107,7 @@ def main():
 
     #No command exit code
     printHelp()
-    exit(127)
+    sys.exit(127)
 
 
 
