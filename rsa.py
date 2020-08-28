@@ -15,6 +15,7 @@ import os
 import sys
 import MillerRabin as mr
 
+VERSION="1.2.1"
 keysFolder = "keys/"
 byteOrder = "little"
 N=0
@@ -28,7 +29,7 @@ FILE_HEADER = "---------- START OF RSA ENCRYPTED MESSAGE ----------"
 FILE_FOOTER = "---------- END OF RSA ENCRYPTED MESSAGE ----------"
 
 def main():
-
+    print("hesham-rsa version ", VERSION)
     if len(sys.argv) > 1:
         if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
             keyFileName = sys.argv[3]
@@ -41,11 +42,11 @@ def main():
                 saveKeyFile(key, keyFileName)
             except IOError:
                 print("could not write file")
-                exit(1)
+                sys.exit(1)
             except Exception as ex:
                 print(ex)
-                exit(1)
-            exit(0)
+                sys.exit(1)
+            sys.exit(0)
         if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
             if len(sys.argv) == 5:
                 msg = sys.argv[2]
@@ -67,7 +68,7 @@ def main():
                 print("Not enough arguments")
                 print("rsa encrypt <message> <key> <signer>")
                 #Make help function
-            exit(0)
+            sys.exit(0)
         if sys.argv[1] == "decrypt": ##rsa decrypt "<cipher>" <key>
             if len(sys.argv) == 4:
                 cipher = sys.argv[2]
@@ -79,22 +80,26 @@ def main():
                 for cipher_word in cipher_list:
                     msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
                 if sig == None:
-                    print("Unknown signature!")
+                    print("\033[91mUnknown signature! \u2717" + "\033[0m")
                 else:
-                    print("Signed by: ", sig)
+                    print("Signed by: \033[92m " + sig + " \u2713\033[0m")
                 print("Decrypted message: \n", msg_decrypted)
             else:
                 print("Not enough arguments")
-                print("rsa decrypt \"<cipher>\" <key>")
-            exit(0)
+                print("rsa decrypt \"<cipher>\" <keyid>")
+            sys.exit(0)
 
         if sys.argv[1] == "list":
             listKeys()
-            exit(0)
+            sys.exit(0)
         if sys.argv[1] == "export": #rsa export <key>
-            key_file_name = sys.argv[2]
-            exportKey(key_file_name)
-            exit(0)
+            if len(sys.argv) == 3:
+                key_file_name = sys.argv[2]
+                exportKey(key_file_name)
+                sys.exit(0)
+            else:
+                print("Not enough arguments")
+                print("rsa export <keyid>")
         if sys.argv[1] == "crack": #rsa crack <key>
             keyName = sys.argv[2]
             cracked_key = crackKey2(keyName)
@@ -106,7 +111,7 @@ def main():
 
     #No command exit code
     printHelp()
-    exit(127)
+    sys.exit(127)
 
 
 
@@ -140,10 +145,10 @@ def encrypt(message, publicKey):
     msg_text = message
     n = publicKey[N]
     e = publicKey[E]
-    print("using n: {0}, e: {1}".format(n, e))
+    #print("using n: {0}, e: {1}".format(n, e))
 
     msg_number_form = int.from_bytes(msg_text.encode(), byteOrder)
-    print("Word: %s or %d" % (msg_text, msg_number_form))
+    #print("Word: %s or %d" % (msg_text, msg_number_form))
 
     msg_encrypted_number_form = pow(msg_number_form, e, n) # c = msg^e mod n
     return msg_encrypted_number_form
@@ -156,7 +161,8 @@ def decrypt(cipher, privateKey, n):
     try:
         msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), byteOrder).decode()).strip()
     except UnicodeDecodeError:
-        print("Cant decrypt properly")
+        #print("decrypt: Cant decrypt properly")
+        return ""
     return msg_decrypted
 
 def getPrime(bits):
@@ -203,7 +209,6 @@ def sign(encrypted_msg, key):
     return signed_msg.strip()
 
 def verify(cipher_list):
-    sig = "Unknown"
     local_keys = os.listdir(keysFolder)
     cipher_list.reverse() #To get last word using index 0
     encrypted_sig = cipher_list[0]
@@ -215,7 +220,8 @@ def verify(cipher_list):
         sig = str(decrypt(int(encrypted_sig, 16), key[E], key[N]))
         if "sig:" in sig:
             return sig.replace("sig:","")
-    else: return sig
+        else: continue
+    else: return None
 
 def readKeyFile(keyName):
     key = tuple()
