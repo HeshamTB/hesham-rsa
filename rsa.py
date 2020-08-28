@@ -15,6 +15,7 @@ import os
 import sys
 import MillerRabin as mr
 
+VERSION="1.2.1"
 keysFolder = "keys/"
 byteOrder = "little"
 N=0
@@ -26,7 +27,7 @@ PHI=5
 ID=6
 
 def main():
-
+    print("hesham-rsa version ", VERSION)
     if len(sys.argv) > 1:
         if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
             keyFileName = sys.argv[3]
