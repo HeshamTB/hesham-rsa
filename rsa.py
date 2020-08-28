@@ -75,22 +75,26 @@ def main():
                 for cipher_word in cipher_list:
                     msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
                 if sig == None:
-                    print("Unknown signature!")
+                    print("\033[91mUnknown signature! \u2717" + "\033[0m")
                 else:
-                    print("Signed by: ", sig)
+                    print("Signed by: \033[92m " + sig + " \u2713\033[0m")
                 print("Decrypted message: \n", msg_decrypted)
             else:
                 print("Not enough arguments")
-                print("rsa decrypt \"<cipher>\" <key>")
+                print("rsa decrypt \"<cipher>\" <keyid>")
             exit(0)
 
         if sys.argv[1] == "list":
             listKeys()
             exit(0)
         if sys.argv[1] == "export": #rsa export <key>
-            key_file_name = sys.argv[2]
-            exportKey(key_file_name)
-            exit(0)
+            if len(sys.argv) == 3:
+                key_file_name = sys.argv[2]
+                exportKey(key_file_name)
+                exit(0)
+            else:
+                print("Not enough arguments")
+                print("rsa export <keyid>")
         if sys.argv[1] == "crack": #rsa crack <key>
             keyName = sys.argv[2]
             cracked_key = crackKey2(keyName)
@@ -136,10 +140,10 @@ def encrypt(message, publicKey):
     msg_text = message
     n = publicKey[N]
     e = publicKey[E]
-    print("using n: {0}, e: {1}".format(n, e))
+    #print("using n: {0}, e: {1}".format(n, e))
 
     msg_number_form = int.from_bytes(msg_text.encode(), byteOrder)
-    print("Word: %s or %d" % (msg_text, msg_number_form))
+    #print("Word: %s or %d" % (msg_text, msg_number_form))
 
     msg_encrypted_number_form = pow(msg_number_form, e, n) # c = msg^e mod n
     return msg_encrypted_number_form
@@ -152,7 +156,8 @@ def decrypt(cipher, privateKey, n):
     try:
         msg_decrypted = str(msg_decrypted.to_bytes(msg_decrypted.bit_length(), byteOrder).decode()).strip()
     except UnicodeDecodeError:
-        print("Cant decrypt properly")
+        #print("decrypt: Cant decrypt properly")
+        return ""
     return msg_decrypted
 
 def getPrime(bits):
@@ -199,7 +204,6 @@ def sign(encrypted_msg, key):
     return signed_msg.strip()
 
 def verify(cipher_list):
-    sig = "Unknown"
     local_keys = os.listdir(keysFolder)
     cipher_list.reverse() #To get last word using index 0
     encrypted_sig = cipher_list[0]
@@ -211,7 +215,8 @@ def verify(cipher_list):
         sig = str(decrypt(int(encrypted_sig, 16), key[E], key[N]))
         if "sig:" in sig:
             return sig.replace("sig:","")
-    else: return sig
+        else: continue
+    else: return None
 
 def readKeyFile(keyName):
     key = tuple()
