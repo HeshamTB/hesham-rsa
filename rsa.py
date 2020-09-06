@@ -28,82 +28,87 @@ ID=6
 
 def main():
     print("hesham-rsa version ", VERSION)
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
-            keyFileName = sys.argv[3]
-            key = generateKeys(keyFileName, int(sys.argv[2]))
-            print("e: ", key[E])
-            print("n: ", key[N])
-            print("d: ", key[D])
-            printKey(key)
-            try:
-                saveKeyFile(key, keyFileName)
-            except IOError:
-                print("could not write file")
-                sys.exit(1)
-            except Exception as ex:
-                print(ex)
-                sys.exit(1)
-            sys.exit(0)
-        if sys.argv[1] == "encrypt": ##rsa encrypt <message> <key> <signer>
-            if len(sys.argv) == 5:
-                msg = sys.argv[2]
-                msg_list = msg.split()
-                keyName = sys.argv[3]
-                signing_key_name = sys.argv[4]
-                key = readKeyFile(keyName)
-                signing_key = readKeyFile(signing_key_name)
-                key_public = (key[N], key[E])
-                msg_encrypted = ""
-                for word in msg_list:
-                    msg_encrypted = msg_encrypted + " " + hex(encrypt(word, key_public))
-                #msg_encrypted = encrypt(msg, key_public)
-                print("Encrypted msg: \n", msg_encrypted)
-                print("Signed: \n", sign(msg_encrypted, signing_key)) ## Adds an encrypted sig at the end of message.
-            else:
-                print("Not enough arguments")
-                print("rsa encrypt <message> <key> <signer>")
-                #Make help function
-            sys.exit(0)
-        if sys.argv[1] == "decrypt": ##rsa decrypt "<cipher>" <key>
-            if len(sys.argv) == 4:
-                cipher = sys.argv[2]
-                cipher_list = cipher.split()
-                sig = verify(cipher_list)
-                del cipher_list[-1]
-                msg_decrypted = ""
-                key = readKeyFile(sys.argv[3])
-                for cipher_word in cipher_list:
-                    msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
-                if sig == None:
-                    print("\033[91mUnknown signature! \u2717" + "\033[0m")
-                else:
-                    print("Signed by: \033[92m " + sig + " \u2713\033[0m")
-                print("Decrypted message: \n", msg_decrypted)
-            else:
-                print("Not enough arguments")
-                print("rsa decrypt \"<cipher>\" <keyid>")
-            sys.exit(0)
-
-        if sys.argv[1] == "list":
-            listKeys()
-            sys.exit(0)
-        if sys.argv[1] == "export": #rsa export <key>
-            if len(sys.argv) == 3:
-                key_file_name = sys.argv[2]
-                exportKey(key_file_name)
-                sys.exit(0)
-            else:
-                print("Not enough arguments")
-                print("rsa export <keyid>")
-        if sys.argv[1] == "crack": #rsa crack <key>
-            keyName = sys.argv[2]
-            cracked_key = crackKey2(keyName)
-            printKey(cracked_key)
-        if sys.argv[1] == "print": #rsa print <key>
-            printKey(readKeyFile(sys.argv[2]))
-        if sys.argv[1] == "help":
-            printHelp()
+    if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
+        keyFileName = sys.argv[3]
+        key = generateKeys(keyFileName, int(sys.argv[2]))
+        print("e: ", key[E])
+        print("n: ", key[N])
+        print("d: ", key[D])
+        printKey(key)
+        try:
+            saveKeyFile(key, keyFileName)
+        except IOError:
+            print("could not write file")
+            sys.exit(1)
+        except Exception as ex:
+            print(ex)
+            sys.exit(1)
+        sys.exit(0)
+    if sys.argv[1] == "encrypt" and len(sys.argv) == 5: ##rsa encrypt <message> <key> <signer>
+        msg = sys.argv[2]
+        msg_list = msg.split()
+        keyName = sys.argv[3]
+        signing_key_name = sys.argv[4]
+        key = readKeyFile(keyName)
+        signing_key = readKeyFile(signing_key_name)
+        key_public = (key[N], key[E])
+        msg_encrypted = ""
+        for word in msg_list:
+            msg_encrypted = msg_encrypted + " " + hex(encrypt(word, key_public))
+        #msg_encrypted = encrypt(msg, key_public)
+        print("Encrypted msg: \n", msg_encrypted)
+        print("Signed: \n", sign(msg_encrypted, signing_key)) ## Adds an encrypted sig at the end of message.
+        sys.exit(0)
+    elif sys.argv[1] == "encrypt":
+        print("Not enough arguments")
+        print("rsa encrypt <message> <key> <signer>")
+        sys.exit(1)
+    if sys.argv[1] == "decrypt" and len(sys.argv) == 4: ##rsa decrypt "<cipher>" <key>
+        cipher = sys.argv[2]
+        cipher_list = cipher.split()
+        sig = verify(cipher_list)
+        del cipher_list[-1]
+        msg_decrypted = ""
+        key = readKeyFile(sys.argv[3])
+        for cipher_word in cipher_list:
+            msg_decrypted = msg_decrypted + " " + str(decrypt(int(cipher_word, 16),key[D],key[N]))
+        if sig == None:
+            print("\033[91mUnknown signature! \u2717" + "\033[0m")
+        else:
+            print("Signed by: \033[92m " + sig + " \u2713\033[0m")
+        print("Decrypted message: \n", msg_decrypted)
+        sys.exit(0)
+    elif sys.argv[1] == "decrypt":
+        print("Not enough arguments")
+        print("rsa decrypt \"<cipher>\" <keyid>")
+        sys.exit(1)
+    if sys.argv[1] == "list":
+        listKeys()
+        sys.exit(0)
+    if sys.argv[1] == "export" and len(sys.argv) == 3: #rsa export <key>
+        key_file_name = sys.argv[2]
+        exportKey(key_file_name)
+        sys.exit(0)
+    elif sys.argv[1] == "export":
+        printHelp()
+        sys.exit(1)
+    if sys.argv[1] == "crack" and len(sys.argv) == 3: #rsa crack <key>
+        keyName = sys.argv[2]
+        cracked_key = crackKey2(keyName)
+        printKey(cracked_key)
+        sys.exit(0)
+    elif sys.argv[1] == "crack":
+        printHelp()
+        sys.exit(1)
+    if sys.argv[1] == "print" and len(sys.argv) == 3: #rsa print <key>
+        printKey(readKeyFile(sys.argv[2]))
+        sys.exit(0)
+    elif sys.argv[1] == "print":
+        printHelp()
+        sys.exit(1)
+    if sys.argv[1] == "help":
+        printHelp()
+        sys.exit(0)
 
     #No command exit code
     printHelp()
