@@ -165,11 +165,11 @@ def getPrime(bits):
     while True:
         #Byte order "little" or "big" does not matter here since we want a random number from os.urandom()
         x = int.from_bytes(os.urandom(int(bits/8)), byteOrder)
-        print("trying: ", x, end="")
+        print(x, end="")
         if mr.is_prime(x):
             print("\nprime: ", x)
             return x
-        print("\r",end="")
+        backTrack(x)
 
 
 def isPrime(number):
@@ -338,6 +338,13 @@ def printHelp():
     print("rsa crack <key>")
     print("rsa print <key>")
     print("rsa list")
+
+def backTrack(x):
+    #Back track and clear terminal with length of x
+    length = len(str(x))
+    while length > 0:
+        print("\b",end="")
+        length -= 1
 
 if __name__ == "__main__":
     main()
