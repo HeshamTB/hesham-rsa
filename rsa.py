@@ -29,7 +29,7 @@ ID=6
 def main():
     print("hesham-rsa version ", VERSION)
     if len(sys.argv) > 1:
-        if sys.argv[1] == "gen": ##rsa gen <keysize> <keyname>
+        if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
             keyFileName = sys.argv[3]
             key = generateKeys(keyFileName, int(sys.argv[2]))
             print("e: ", key[E])
