@@ -8,7 +8,7 @@ There is no packaging or installation. Works in current dir (portable) for now.
 
 # Usage
 
-    ./rsa.py
+    ./rsa.py [COMMAND] [ARGS]
    or 
    
     python rsa.py
