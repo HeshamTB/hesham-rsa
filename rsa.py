@@ -31,9 +31,14 @@ def main():
     if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
         keyFileName = sys.argv[3]
         if keyExist(keyFileName):
-            ##ask
-            print("key already exists")
-            sys.exit(0)
+            choice = input("overwrite key %s (y/n)" % keyFileName)
+            if choice == "y":
+                key = generateKeys(keyFileName, int(sys.argv[2]))
+            elif choice == "n":
+                sys.exit(0)
+            else:
+                print("unrecognized choice!")
+                sys.exit(1)
         else:
             key = generateKeys(keyFileName, int(sys.argv[2]))
         print("e: ", key[E])
