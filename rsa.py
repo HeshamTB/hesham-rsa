@@ -15,7 +15,7 @@ import os
 import sys
 import MillerRabin as mr
 
-VERSION="1.2.1"
+VERSION="1.2.2"
 keysFolder = "keys/"
 byteOrder = "little"
 N=0
