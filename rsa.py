@@ -30,7 +30,17 @@ def main():
     print("hesham-rsa version ", VERSION)
     if sys.argv[1] == "gen" and len(sys.argv) == 4: ##rsa gen <keysize> <keyname>
         keyFileName = sys.argv[3]
-        key = generateKeys(keyFileName, int(sys.argv[2]))
+        if keyExist(keyFileName):
+            choice = input("overwrite key %s (y/n)" % keyFileName)
+            if choice == "y":
+                key = generateKeys(keyFileName, int(sys.argv[2]))
+            elif choice == "n":
+                sys.exit(0)
+            else:
+                print("unrecognized choice!")
+                sys.exit(1)
+        else:
+            key = generateKeys(keyFileName, int(sys.argv[2]))
         print("e: ", key[E])
         print("n: ", key[N])
         print("d: ", key[D])
@@ -351,5 +361,8 @@ def backTrack(x):
         print("\b",end="")
         length -= 1
 
+def keyExist(keyName):
+    exist = os.path.exists(keysFolder+keyName)
+    return exist
 if __name__ == "__main__":
     main()
