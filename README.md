@@ -16,7 +16,7 @@ There is no packaging or installation. Works in current dir (portable) for now.
 ## generating keys
 to generate a key pair with and ID 
 
-    ./rsa.py [keysize] [keyID]
+    ./rsa.py gen [keysize] [keyID]
 All generated keys are {working dir}/saves/ in keys folder
 ## encrypting 
 
