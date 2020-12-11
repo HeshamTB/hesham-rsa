@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# Copyright (C) 2019, 2020 Hesham T. Banafa
+
 #program to generate rsa key pair using methods in EE-305
 # Hesham Banafa 
 

@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# Copyright (C) 2019, 2020 Hesham T. Banafa
+
 s = 'test message hello awdawd'
 print(s)
 s_number = int.from_bytes(s.encode('utf-8'),'little')

@@ -1,3 +1,5 @@
+# Copyright (C) 2019, 2020 Hesham T. Banafa
+
 #From: https://stackoverflow.com/questions/39964383/implementation-of-i2osp-and-os2ip
 
 def i2osp(x, xLen):
