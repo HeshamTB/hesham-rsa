@@ -6,3 +6,6 @@ test-file
 dist/
 build/
 *.spec
+
+#venv dir
+venv/
