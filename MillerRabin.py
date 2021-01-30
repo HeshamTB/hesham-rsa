@@ -1,5 +1,5 @@
 
-# Copyright (C) 2019, 2020 Hesham T. Banafa
+# Copyright (C) 2019-2021 Hesham T. Banafa
 
 #From: https://stackoverflow.com/questions/17298130/working-with-large-primes-in-python
 from random import randrange

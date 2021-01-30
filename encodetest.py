@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Copyright (C) 2019, 2020 Hesham T. Banafa
+# Copyright (C) 2019-2021 Hesham T. Banafa
 
 s = 'test message hello awdawd'
 print(s)
